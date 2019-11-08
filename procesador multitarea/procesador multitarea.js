@@ -6,6 +6,10 @@ class Administracion
         this._contador = 300;
         this._listaProcesos;
         this._inicio;
+        this.sumador = 0;
+        this.contadorEspera  = 0;
+        this.contadorvacio = 0
+        this.contadorCompletados = 0;
     }
     iniciar() 
     {   
@@ -13,67 +17,59 @@ class Administracion
         let aux = this._listaProcesos;
         let aux2 = this._listaProcesos;
         let probabilidad = new Probabilidades();
-        let contadorEspera = 0;
-        let contadorvacio = 0;
-        let contadorCompletados = 0;
-        let sumador = 0;
         for(var i = 0; i < 300; i++)
         {
             console.log("ciclo numero: " + (i+1))
             if(i === 0)
             {
                 aux._cantidadTareas = probabilidad.cantidadTareas;
+                this.sumador = this.sumador + aux._cantidadTareas;
                 aux._siguiente = new lista();
                 this._inicio = aux;
             }
 
-            if(contadorEspera >= 1)
+            if(this.contadorEspera  >= 1)
             {
                 aux2 = aux2._siguiente;
             }
 
             if(probabilidad.probabilidadNuevoProceso === 1)
             {
-                contadorEspera = contadorEspera + 1;
+                this.contadorEspera  = this.contadorEspera  + 1;
                 aux._siguiente = new lista();
                 aux._siguiente._cantidadTareas = probabilidad.cantidadTareas;
-                sumador = sumador + aux._siguiente._cantidadTareas;
+                this.sumador = this.sumador + aux._siguiente._cantidadTareas;
                 aux._siguiente._siguiente = this._inicio;
                 console.log("el siguiente proceso tiene: " + aux._siguiente._cantidadTareas + " tareas");
                 aux = aux._siguiente;
             }
 
-            if(aux2._siguiente._cantidadTareas <= 0 && contadorEspera >= 1)
+            if(aux2._siguiente._cantidadTareas <= 0 && this.contadorEspera  >= 1)
             {
-                contadorCompletados++;
+                this.contadorCompletados++;
                             aux2._siguiente = aux2._siguiente._siguiente;
-                contadorEspera--;
+                this.contadorEspera --;
             }
 
-            if(aux2._cantidadTareas <= 0 && contadorEspera === 0)
+            if(aux2._cantidadTareas <= 0 && this.contadorEspera  === 0)
             {
-                contadorvacio++;
+                this.contadorvacio++;
             }
-            this.proceso(contadorEspera, aux2, contadorvacio, contadorCompletados, sumador);
+            this.proceso(aux2);
         }
     }
-    proceso(contadorEspera, aux2, contadorvacio, contadorCompletados, sumador)
+    proceso(aux2)
     {
-        let aux3 = aux2;
-        sumador = sumador + aux3._cantidadTareas;
-        this.impresion(contadorEspera, aux2, contadorvacio, contadorCompletados, sumador);
+        this.impresion(aux2);
+        this.sumador = this.sumador-1;
         aux2._cantidadTareas = aux2._cantidadTareas-1;
-            for(let i = 0; i < contadorEspera; i++)
-            {
-                aux3 = aux3._siguiente;
-            }
     }
-    impresion(contadorEspera, aux2, contadorvacio, contadorCompletados, sumador) 
+    impresion(aux2) 
     {
         console.log("procesos faltantes al proceso actual: " + aux2._cantidadTareas);
-        console.log("Procesos en cola: " + contadorEspera + " Suma de tareas totales faltantes: " + sumador);
-        console.log("Cantidad de veces que a estado vacio: " + contadorvacio);
-        console.log("Procesos completados: " + contadorCompletados);
+        console.log("Procesos en cola: " + this.contadorEspera  + " Suma de tareas totales faltantes: " + this.sumador);
+        console.log("Cantidad de veces que a estado vacio: " + this.contadorvacio);
+        console.log("Procesos completados: " + this.contadorCompletados);
     }
 }
         class lista
